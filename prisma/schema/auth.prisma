@@ -1,0 +1,60 @@
+model User {
+  id            String    @id @default(uuid(7))
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(uuid(7))
+  expiresAt DateTime @db.Timestamp(6)
+  token     String   @unique
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "idx_sessions_user_id")
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id @default(uuid(7))
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime? @db.Timestamp(6)
+  refreshTokenExpiresAt DateTime? @db.Timestamp(6)
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt             DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+
+  @@index([userId], name: "idx_accounts_user_id")
+  @@map("accounts")
+}
+
+model Verification {
+  id         String   @id @default(uuid(7))
+  identifier String
+  value      String
+  expiresAt  DateTime @db.Timestamp(6)
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp(6)
+
+  @@index([identifier], name: "idx_verifications_identifier")
+  @@map("verifications")
+}
