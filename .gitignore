@@ -19,7 +19,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 dist/
 build/
 out/
+src/generated/
 *.tsbuildinfo
+
 
 # Framework caches & build outputs
 .next/
