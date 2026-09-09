@@ -1,150 +1,106 @@
 import type { Request, Response } from "express";
 import { SpecialtyService } from "./specialty.service";
 import type { ISpecialtyFilterRequest } from "./specialty.interface";
+import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/sendResponse";
 
 // --- Create Specialty ---
-const createSpecialty = async (req: Request, res: Response) => {
-  try {
-    // 1. Call database service
-    const result = await SpecialtyService.createSpecialtyIntoDB(req.body);
+const createSpecialty = catchAsync(async (req: Request, res: Response) => {
+  const result = await SpecialtyService.createSpecialtyIntoDB(req.body);
 
-    // 2. Send response
-    res.status(201).json({
-      success: true,
-      message: "Specialty created successfully",
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to create specialty",
-      error: error instanceof Error ? error.message : error,
-    });
-  }
-};
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: "Specialty created successfully",
+    data: result,
+  });
+});
 
 // --- Get All Specialties ---
-const getAllSpecialties = async (req: Request, res: Response) => {
-  try {
-    // 1. Parse filter parameters
-    const filters: ISpecialtyFilterRequest = {
-      searchTerm:
-        typeof req.query.searchTerm === "string"
-          ? req.query.searchTerm
-          : undefined,
-      isDeleted:
-        typeof req.query.isDeleted === "string"
-          ? req.query.isDeleted === "true"
-          : undefined,
-    };
+const getAllSpecialties = catchAsync(async (req: Request, res: Response) => {
+  const filters: ISpecialtyFilterRequest = {
+    searchTerm:
+      typeof req.query.searchTerm === "string"
+        ? req.query.searchTerm
+        : undefined,
+    isDeleted:
+      typeof req.query.isDeleted === "string"
+        ? req.query.isDeleted === "true"
+        : undefined,
+  };
 
-    // 2. Call database service
-    const result = await SpecialtyService.getAllSpecialtiesFromDB(filters);
+  const result = await SpecialtyService.getAllSpecialtiesFromDB(filters);
 
-    // 3. Send response
-    res.status(200).json({
-      success: true,
-      message: "Specialties retrieved successfully",
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve specialties",
-      error: error instanceof Error ? error.message : error,
-    });
-  }
-};
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Specialties retrieved successfully",
+    data: result,
+  });
+});
 
 // --- Get Single Specialty ---
-const getSingleSpecialty = async (req: Request, res: Response) => {
-  try {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    if (!id) {
-      res.status(400).json({
-        success: false,
-        message: "Specialty ID is required",
-      });
-      return;
-    }
-
-    // 3. Call database service
-    const result = await SpecialtyService.getSingleSpecialtyFromDB(id);
-
-    // 4. Send response
-    res.status(200).json({
-      success: true,
-      message: "Specialty retrieved successfully",
-      data: result,
-    });
-  } catch (error) {
-    res.status(404).json({
+const getSingleSpecialty = catchAsync(async (req: Request, res: Response) => {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  if (!id) {
+    res.status(400).json({
       success: false,
-      message: "Specialty not found",
-      error: error instanceof Error ? error.message : error,
+      message: "Specialty ID is required",
     });
+    return;
   }
-};
+
+  const result = await SpecialtyService.getSingleSpecialtyFromDB(id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Specialty retrieved successfully",
+    data: result,
+  });
+});
 
 // --- Update Specialty ---
-const updateSpecialty = async (req: Request, res: Response) => {
-  try {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    if (!id) {
-      res.status(400).json({
-        success: false,
-        message: "Specialty ID is required",
-      });
-      return;
-    }
-
-    // 3. Call database service
-    const result = await SpecialtyService.updateSpecialtyIntoDB(id, req.body);
-
-    // 4. Send response
-    res.status(200).json({
-      success: true,
-      message: "Specialty updated successfully",
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({
+const updateSpecialty = catchAsync(async (req: Request, res: Response) => {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  if (!id) {
+    res.status(400).json({
       success: false,
-      message: "Failed to update specialty",
-      error: error instanceof Error ? error.message : error,
+      message: "Specialty ID is required",
     });
+    return;
   }
-};
+
+  const result = await SpecialtyService.updateSpecialtyIntoDB(id, req.body);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Specialty updated successfully",
+    data: result,
+  });
+});
 
 // --- Delete Specialty ---
-const deleteSpecialty = async (req: Request, res: Response) => {
-  try {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    if (!id) {
-      res.status(400).json({
-        success: false,
-        message: "Specialty ID is required",
-      });
-      return;
-    }
-
-    // 3. Call database service
-    const result = await SpecialtyService.deleteSpecialtyFromDB(id);
-
-    // 4. Send response
-    res.status(200).json({
-      success: true,
-      message: "Specialty deleted successfully",
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({
+const deleteSpecialty = catchAsync(async (req: Request, res: Response) => {
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  if (!id) {
+    res.status(400).json({
       success: false,
-      message: "Failed to delete specialty",
-      error: error instanceof Error ? error.message : error,
+      message: "Specialty ID is required",
     });
+    return;
   }
-};
+
+  const result = await SpecialtyService.deleteSpecialtyFromDB(id);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Specialty deleted successfully",
+    data: result,
+  });
+});
 
 export const SpecialtyController = {
   createSpecialty,
@@ -153,4 +109,5 @@ export const SpecialtyController = {
   updateSpecialty,
   deleteSpecialty,
 };
+
 

@@ -4,6 +4,7 @@ import express, {
   type Response,
 } from "express";
 import router from "./routes";
+import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 
 const app: Application = express();
 
@@ -23,6 +24,9 @@ app.get("/", (_req: Request, res: Response) => {
     message: "Doctor Management API is running",
   });
 });
+
+// Global Error Handler
+app.use(globalErrorHandler);
 
 export default app;
 
