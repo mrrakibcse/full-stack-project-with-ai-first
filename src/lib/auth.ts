@@ -11,6 +11,50 @@ export const auth = betterAuth({
   }),
   secret: config.betterAuthSecret,
   baseURL: config.betterAuthUrl,
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        defaultValue: "USER",
+        required: false,
+      },
+      status: {
+        type: "string",
+        defaultValue: "PENDING",
+        required: false,
+      },
+      needPassword: {
+        type: "boolean",
+        defaultValue: false,
+        required: false,
+      },
+      isDeleted: {
+        type: "boolean",
+        defaultValue: false,
+        required: false,
+      },
+      deletedAt: {
+        type: "date",
+        required: false,
+      },
+      gender: {
+        type: "string",
+        required: false,
+      },
+      phoneNumber: {
+        type: "string",
+        required: false,
+      },
+      bio: {
+        type: "string",
+        required: false,
+      },
+      dateOfBirth: {
+        type: "date",
+        required: false,
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
