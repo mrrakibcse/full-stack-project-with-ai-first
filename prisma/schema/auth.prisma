@@ -1,9 +1,42 @@
+enum Role {
+  USER
+  ADMIN
+  DOCTOR
+  NURSE
+  RECEPTIONIST
+  PHARMACIST
+  LAB_TECHNICIAN
+  RADIOLOGIST
+  PHYSIOTHERAPIST
+  AMBULANCE_DRIVER
+  SECURITY
+  CLEANING_STAFF
+  PATIENT
+}
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  PENDING
+  ARCHIVED
+}
+
 model User {
   id            String    @id @default(uuid(7))
   name          String
   email         String    @unique
   emailVerified Boolean   @default(false)
+  role          Role      @default(USER)
+  status        UserStatus @default(PENDING)
+  gender        Gender?
   image         String?
+  phoneNumber   String?
+  bio           String?
+  dateOfBirth   DateTime? @db.Date
   createdAt     DateTime  @default(now()) @db.Timestamp(6)
   updatedAt     DateTime  @default(now()) @updatedAt @db.Timestamp(6)
   sessions      Session[]

@@ -13,14 +13,21 @@ interface ISendEmailOptions {
   to: string;
   subject: string;
   html: string;
+  text?: string;
 }
 
-export const sendEmail = async ({ to, subject, html }: ISendEmailOptions) => {
+export const sendEmail = async ({
+  to,
+  subject,
+  html,
+  text,
+}: ISendEmailOptions) => {
   const info = await transporter.sendMail({
     from: config.smtpFrom,
     to,
     subject,
     html,
+    text,
   });
   return info;
 };
