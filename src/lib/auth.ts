@@ -11,6 +11,21 @@ export const auth = betterAuth({
   }),
   secret: config.betterAuthSecret,
   baseURL: config.betterAuthUrl,
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          if (user.role === "PATIENT") {
+            await prisma.patient.create({
+              data: {
+                userId: user.id,
+              },
+            });
+          }
+        },
+      },
+    },
+  },
   user: {
     additionalFields: {
       role: {

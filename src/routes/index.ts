@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { SpecialtyRoutes } from "../module/specialty";
+import { PatientRoutes } from "../module/patient";
+import { AuthRoutes } from "../module/auth";
 
 const router = Router();
 
@@ -10,14 +12,17 @@ interface IModuleRoute {
 
 const moduleRoutes: IModuleRoute[] = [
   {
+    path: "/auth",
+    route: AuthRoutes,
+  },
+  {
     path: "/specialties",
     route: SpecialtyRoutes,
   },
-  // Future module routes can be registered here:
-  // {
-  //   path: "/users",
-  //   route: UserRoutes,
-  // },
+  {
+    path: "/patients",
+    route: PatientRoutes,
+  },
 ];
 
 moduleRoutes.forEach((route) => {

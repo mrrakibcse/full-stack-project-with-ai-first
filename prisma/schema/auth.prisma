@@ -17,6 +17,7 @@ model User {
   updatedAt     DateTime   @default(now()) @updatedAt @db.Timestamp(6)
   sessions      Session[]
   accounts      Account[]
+  patient       Patient?
 
   @@index([isDeleted], name: "idx_users_is_deleted")
   @@map("users")
