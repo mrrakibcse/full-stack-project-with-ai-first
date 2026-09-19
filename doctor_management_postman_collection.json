@@ -1,0 +1,487 @@
+{
+  "info": {
+    "_postman_id": "doctor-management-collection-v1",
+    "name": "Doctor Management API",
+    "description": "Complete Postman collection for the Doctor Management API, covering Better Auth, Custom Auth, Specialties, and Patients modules.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "patientId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "specialtyId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": ["{{baseUrl}}"],
+          "path": [""]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "1. Register Patient (Custom V1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.patient@example.com\",\n  \"password\": \"Password123!\",\n  \"phoneNumber\": \"+1234567890\",\n  \"gender\": \"FEMALE\",\n  \"dateOfBirth\": \"1995-05-15\",\n  \"bio\": \"Patient with general consultation needs\",\n  \"patient\": {\n    \"bloodGroup\": \"A_POSITIVE\",\n    \"maritalStatus\": \"SINGLE\",\n    \"emergencyContactName\": \"John Doe\",\n    \"emergencyContactNumber\": \"+1987654321\",\n    \"address\": \"123 Healthcare Ave, Suite 4\",\n    \"medicalHistory\": \"No major illnesses\",\n    \"allergies\": \"Penicillin\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/register-patient",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "auth", "register-patient"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Sign In with Email (Better Auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.token) {",
+                  "    pm.collectionVariables.set('token', res.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane.patient@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-in/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-in", "email"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Sign Up with Email (Better Auth)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-up/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-up", "email"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Current Session (Better Auth)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/get-session",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "get-session"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Sign Out (Better Auth)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/sign-out",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "sign-out"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Specialties",
+      "item": [
+        {
+          "name": "1. Create Specialty",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.data && res.data.id) {",
+                  "    pm.collectionVariables.set('specialtyId', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Cardiology\",\n  \"description\": \"Cardiovascular and heart health care\",\n  \"icon\": \"https://example.com/icons/cardiology.png\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/specialties",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "specialties"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Specialties",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/specialties?searchTerm=&isDeleted=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "specialties"],
+              "query": [
+                {
+                  "key": "searchTerm",
+                  "value": "",
+                  "description": "Optional search term for title"
+                },
+                {
+                  "key": "isDeleted",
+                  "value": "false",
+                  "description": "Filter by deleted status"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get Single Specialty",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/specialties/{{specialtyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "specialties", "{{specialtyId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Update Specialty",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Cardiology & Vascular\",\n  \"description\": \"Advanced cardiovascular and vascular surgery\",\n  \"icon\": \"https://example.com/icons/cardio-v2.png\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/specialties/{{specialtyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "specialties", "{{specialtyId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Delete Specialty (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/specialties/{{specialtyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "specialties", "{{specialtyId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Patients",
+      "item": [
+        {
+          "name": "1. Create Patient Profile (ADMIN, PATIENT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res && res.data && res.data.id) {",
+                  "    pm.collectionVariables.set('patientId', res.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"<REPLACE_WITH_USER_ID>\",\n  \"bloodGroup\": \"A_POSITIVE\",\n  \"maritalStatus\": \"SINGLE\",\n  \"emergencyContactName\": \"John Doe\",\n  \"emergencyContactNumber\": \"+1987654321\",\n  \"address\": \"123 Healthcare Ave, Suite 4\",\n  \"medicalHistory\": \"No previous surgeries\",\n  \"allergies\": \"Penicillin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "patients"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Get All Patients (ADMIN, DOCTOR)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients?searchTerm=&bloodGroup=&maritalStatus=&isDeleted=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "patients"],
+              "query": [
+                {
+                  "key": "searchTerm",
+                  "value": "",
+                  "description": "Searches name, email, phone, or address"
+                },
+                {
+                  "key": "bloodGroup",
+                  "value": "",
+                  "description": "A_POSITIVE, A_NEGATIVE, B_POSITIVE, B_NEGATIVE, AB_POSITIVE, AB_NEGATIVE, O_POSITIVE, O_NEGATIVE"
+                },
+                {
+                  "key": "maritalStatus",
+                  "value": "",
+                  "description": "SINGLE, MARRIED, DIVORCED, WIDOWED"
+                },
+                {
+                  "key": "isDeleted",
+                  "value": "false",
+                  "description": "Filter by deleted status"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Get My Profile (PATIENT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "patients", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Single Patient (ADMIN, DOCTOR, PATIENT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "patients", "{{patientId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Update Patient (ADMIN, PATIENT)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bloodGroup\": \"O_POSITIVE\",\n  \"maritalStatus\": \"MARRIED\",\n  \"emergencyContactName\": \"Jane Doe\",\n  \"emergencyContactNumber\": \"+1987654320\",\n  \"address\": \"456 Elm Street, City\",\n  \"medicalHistory\": \"Hypertension managed\",\n  \"allergies\": \"None\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "patients", "{{patientId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Delete Patient (Soft Delete) (ADMIN)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "patients", "{{patientId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
